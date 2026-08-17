@@ -1,0 +1,32 @@
+{% extends 'bookings/base.html' %}
+{% load static %}
+{% block title %}Reserve a Table — The Oasis{% endblock %}
+{% block content %}
+<style>
+.reserve-page{padding:70px 0}.reserve-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:45px;align-items:start}.reserve-intro{background:linear-gradient(160deg,rgba(8,27,22,.9),rgba(16,44,38,.65)),url("{% static 'bookings/images/real/interior.jpg' %}") center/cover;color:var(--cream);min-height:650px;padding:45px;display:flex;flex-direction:column;justify-content:flex-end}.reserve-intro h1{font-size:56px;font-weight:400}.reserve-intro p{color:rgba(245,234,215,.7);font-size:14px}.booking-tips{margin-top:35px;border-top:1px solid rgba(245,234,215,.18);padding-top:22px;font-size:12px;color:rgba(245,234,215,.58)}.form-title{font-size:45px;font-weight:400;margin-bottom:8px}.form-sub{color:var(--muted);font-size:13px;margin-bottom:28px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.full{grid-column:1/-1}.divider{border:0;border-top:1px solid var(--line);margin:27px 0}.submit{width:100%;margin-top:5px}.field-hint{display:block;margin-top:6px;font-size:11px;color:var(--muted)}.field-error{display:block;margin-top:6px;color:#8d2f22;font-size:11px}@media(max-width:850px){.reserve-grid{grid-template-columns:1fr}.reserve-intro{min-height:420px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+<section class="reserve-page"><div class="container reserve-grid"><aside class="reserve-intro"><div><p class="eyebrow" style="color:#e2b993">The Oasis reservations</p><h1>Your table is waiting.</h1><p>Tell us when you would like to visit. We will check the schedule for the table you select and confirm your reservation instantly.</p><div class="booking-tips">Reservations are checked against existing bookings automatically to prevent overlapping table times.</div></div></aside><div class="form-card fade-in"><h2 class="form-title">Book a table</h2><p class="form-sub">Complete the details below. All fields are required.</p>{% if error %}<div class="error-box">{{ error }}</div>{% endif %}{% if form.non_field_errors %}<div class="error-box">{{ form.non_field_errors.0 }}</div>{% endif %}<form method="POST">{% csrf_token %}<div class="form-grid"><div class="field"><label>Full name</label><input name="name" type="text" placeholder="Your name" required></div><div class="field"><label>Phone</label><input name="phone" type="text" placeholder="+234 ..." required></div><div class="field full"><label>Email address</label><input name="email" type="email" placeholder="you@example.com" required></div></div><hr class="divider"><p class="eyebrow">Reservation details</p><div class="form-grid"><div class="field full"><label>Table</label><select id="table-select" name="table" required><option value="" selected disabled>Choose a table</option>{% for table in tables %}<option value="{{ table.id }}" data-capacity="{{ table.capacity }}">Table {{ table.table_number }} · up to {{ table.capacity }} guests</option>{% endfor %}</select></div><div class="field"><label>Date</label><input name="date" type="date" required></div><div class="field"><label>Guests</label><input id="guests-input" name="guests" type="number" min="1" placeholder="2" required><small id="guest-limit" class="field-hint">Select a table to see the maximum number of guests.</small>{% if form.guests.errors %}<small class="field-error">{{ form.guests.errors.0 }}</small>{% endif %}</div><div class="field"><label>Start time</label><input name="start_time" type="time" required></div><div class="field"><label>End time</label><input name="end_time" type="time" required></div></div><button class="btn btn-dark submit" type="submit">Confirm reservation</button></form></div></div></section>
+<script>
+(function(){
+  const tableSelect=document.getElementById("table-select");
+  const guestsInput=document.getElementById("guests-input");
+  const hint=document.getElementById("guest-limit");
+  function updateGuestLimit(){
+    const option=tableSelect.options[tableSelect.selectedIndex];
+    const capacity=option ? option.dataset.capacity : "";
+    if(!capacity){
+      guestsInput.removeAttribute("max");
+      hint.textContent="Select a table to see the maximum number of guests.";
+      return;
+    }
+    guestsInput.max=capacity;
+    hint.textContent="Maximum " + capacity + " guest" + (capacity === "1" ? "" : "s") + " for this table.";
+    if(guestsInput.value && Number(guestsInput.value)>Number(capacity)){
+      guestsInput.value=capacity;
+    }
+  }
+  tableSelect.addEventListener("change",updateGuestLimit);
+  updateGuestLimit();
+})();
+</script>
+{% endblock %}
