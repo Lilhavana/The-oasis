@@ -83,13 +83,15 @@ WSGI_APPLICATION = 'booking_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+import dj_database_url
+import os
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL') or
-                f"postgres://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}",
-        conn_max_age=600,
+        default="postgresql://osim:OMRU2VlR8ki4Geug1QWCEz9NhFk6x6Ez@dpg-da2g86fqj5pc73fomce0-a/oasis_db_jaur"
     )
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
