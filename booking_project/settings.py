@@ -31,11 +31,11 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv(
     'ALLOWED_HOSTS',
-    'localhost,127.0.0.1,theoasis.up.railway.app'
+    'theoasis.onrender.com,localhost,127.0.0.1'
 ).split(',')
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://theoasis.up.railway.app',
+    'https://theoasis.onrender.com',
 ]
 # Application definition
 
