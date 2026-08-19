@@ -83,15 +83,27 @@ WSGI_APPLICATION = 'booking_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-import dj_database_url
 import os
+from pathlib import Path
+import dj_database_url
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default="postgresql://osim:OMRU2VlR8ki4Geug1QWCEz9NhFk6x6Ez@dpg-da2g86fqj5pc73fomce0-a/oasis_db_jaur"
-    )
-}
+BASE_DIR = Path(__file__).resolve().parent.parent
 
+if os.getenv("RENDER") == "true":
+    # Production: PostgreSQL on Render
+    DATABASES = {
+        "default": dj_database_url.config(
+            default="postgresql://osim:OMRU2VlR8ki4Geug1QWCEz9NhFk6x6Ez@dpg-da2g86fqj5pc73fomce0-a/oasis_db_jaur"
+        )
+    }
+else:
+    # Local development: SQLite
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
